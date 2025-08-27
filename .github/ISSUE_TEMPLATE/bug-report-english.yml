@@ -1,19 +1,19 @@
 name: "Bug Report (English)"
 description: Create a bug report to help us improve our content.
-title: "[BUG] - <title>"
+title: "[BUG] - Problem 901: Incorrect example for Online Stock Span"
 labels: []
 body:
   - type: input
     id: username
     attributes:
-      label: "LeetCode Username"
+      label: "llukito"
       description: Click your avatar in the top right on the problem page after logging in to find your username.
     validations:
       required: true
   - type: input
     id: problem-details
     attributes:
-      label: "Problem Number, Title, and Link"
+      label: "901. Online Stock Span https://leetcode.com/problems/online-stock-span/"
       placeholder: 1. Two Sum https://leetcode.com/problems/two-sum/
     validations:
       required: true
@@ -40,35 +40,25 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+    value: |
+      The problem statement contains an incorrect example.
+
+      Excerpt from the description:
+      "If the prices of the stock in the last four days is [7,2,1,2] and the price of the stock today is 2, then the span of today is 4."
+
+      By the problem definition, the span is the number of consecutive days (including today) going backward for which the price was <= today's price (2). Counting backwards:
+      - today: 2 <= 2 → count = 1
+      - previous: 1 <= 2 → count = 2
+      - previous: 2 <= 2 → count = 3
+      - previous: 7 <= 2 → stop
+
+      So the correct span for that example is **3**, not 4. This appears to be a typo in the example.
   - type: dropdown
     id: language-used
     attributes:
       label: "Language Used for Code"
       options:
-        - C++
-        - Java
         - Python/Python3
-        - C
-        - C#
-        - JavaScript
-        - TypeScript
-        - PHP
-        - Swift
-        - Kotlin
-        - Dart
-        - Go
-        - Ruby
-        - Scala
-        - Rust
-        - Racket
-        - Erlang
-        - Elixir
-        - MySQL
-        - MSSQL
-        - Oracle SQL
-        - PostgreSQL
-        - Pandas
-        - Bash
     validations:
       required: false
   - type: textarea
@@ -79,6 +69,20 @@ body:
       render: bash
     validations:
       required: false
+    value: |
+      class StockSpanner:
+          def __init__(self):
+              self.stack = []  # (price, span)
+
+          def next(self, price: int) -> int:
+              span = 1
+              while self.stack and self.stack[-1][0] <= price:
+                  span += self.stack.pop()[1]
+              self.stack.append((price, span))
+              return span
+
+      # Example:
+      # For previous prices [7,2,1] then calling next(2) returns 3.
   - type: textarea
     id: expected-behavior
     attributes:
@@ -86,6 +90,11 @@ body:
       description: A clear and concise description of what was expected to happen in contrast with what happened.
     validations:
       required: true
+    value: |
+      The example should state that the span is 3 for prices [7,2,1,2] with today's price 2.
+      Suggested fixes:
+      - Correct the example result from 4 → 3, or
+      - Change the example input to [2,2,1,2] if the intended result was 4.
   - type: textarea
     id: screenshots
     attributes:
@@ -93,6 +102,8 @@ body:
       description: If applicable, add screenshots to explain the issue.
     validations:
       required: false
+    value: |
+      (Optional) Attach a screenshot of the problem page showing the incorrect example.
   - type: textarea
     id: additional-context
     attributes:
@@ -100,3 +111,5 @@ body:
       description: Add any other additional context about the bug.
     validations:
       required: false
+    value: |
+      This is a content typo (example mismatch). It may confuse readers learning the definition via examples. No change to constraints or tests is needed. Thank you!
